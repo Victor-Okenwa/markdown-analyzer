@@ -1,5 +1,6 @@
 from pathlib import Path
-from parser import analyze_directory
+import sys
+from analyzer import analyze_directory
 from models import DirectoryReport
 
 # formats report into a beautiful Markdown string using multi-line f-strings
@@ -30,10 +31,38 @@ def format_markdown_report(report: DirectoryReport) -> str:
 
 
 def main():
-    target_path = input(" Input local directory: \n")
-    if Path(target_path).exists():
-        analysis = analyze_directory(target_path)
-        print(analysis)
+    # Allow reading path from CLI argument OR interactive user input
+    if len(sys.argv) > 1:
+        target_path = sys.argv[1]
+    else:
+        target_path = (
+            input("Input local directory path (press Enter for current folder '.'): ").strip()
+            or "."
+        )
+
+    path = Path(target_path)
+    
+    if not path:
+        print(f"Error: Path '{target_path}' does not exist.")
+        return
+
+    print(f"\n🔍 Analyzing Markdown files in: {path.resolve()} ...\n")
+
+    # Run analysis & format output
+    analysis = analyze_directory(str(path))
+    formatted_report = format_markdown_report(analysis)
+
+    print(formatted_report)
+
+    # Save output to summary_report.md file
+    output_file = Path("summary_report.md")
+    output_file.write_text(formatted_report, encoding="utf-8")
+
+    print(f"✅ Report saved to: {output_file.resolve()}")
+
+
+if __name__ == "__main__":
+    main()
 
 
 
