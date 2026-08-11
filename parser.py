@@ -1,5 +1,5 @@
 # Single file parsing Logic
-from pydantic import BaseModel, Field 
+from pydantic import BaseModel, Field
 
 #This model represents the analyzed statistics of a single Markdown file.
 class FileMetrics(BaseModel):
