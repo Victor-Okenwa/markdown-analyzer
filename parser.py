@@ -1,6 +1,6 @@
 # Single file parsing Logic
 
-from models import FileMetrics
+from models import DirectoryReport, FileMetrics
 
 
 def analyze_file(file_path: str) -> FileMetrics:
@@ -21,3 +21,6 @@ def analyze_file(file_path: str) -> FileMetrics:
             code_block_count=code_block_count,
         )
 
+
+def analyze_directory(directory_path: str) -> DirectoryReport:
+    
