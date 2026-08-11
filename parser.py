@@ -1,20 +1,23 @@
 # Single file parsing Logic
-from pydantic import BaseModel, Field
 
-#This model represents the analyzed statistics of a single Markdown file.
-class FileMetrics(BaseModel):
-    file_path: str
-    word_count: int = Field(default=0, ge=0)
-    reading_time_minutes: float = Field(default=0.0)
-    header_count: int = Field(default=0)
-    code_block_count: int = Field(default=0)
-    has_broken_links: bool = Field(default=False)
+from models import FileMetrics
 
-# This model represents the aggregated summary of an entire folder filled with Markdown files.
-class DirectoryReport(BaseModel): 
-    total_files: int
-    total_words: int
-    total_code_blocks: int
-    avg_reading_time: float
-    files: list[FileMetrics]
+
+def analyze_file(file_path: str) -> FileMetrics:
+    with open(file_path, "r", encoding="utf-8") as file:
+        content = file.read()
+        word_count: int = len(content.split())
+        reading_time: float = word_count/200.0
+
+        lines = content.splitlines()
+        header_count: int = len([line for line in lines if line.strip().startswith("#")])
+        code_block_count: int = len([line for line in lines if line.strip().startswith("```")])//2
+
+        return FileMetrics(
+            file_path=file_path,
+            word_count=word_count,
+            reading_time_minutes=reading_time,
+            header_count=header_count,
+            code_block_count=code_block_count,
+        )
 
